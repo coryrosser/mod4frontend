@@ -7,10 +7,17 @@ const Styles = styled.div`
         background-color: #222;
     }
     .navbar-brand, .navbar-nav .nav-link {
+        padding: 0.4rem;
+        border-right: #222 solid 1px;
+        border-left: #222 solid 1px;
         color: #bbb;
+        margin-left: 1rem;
+        font-size: 1.3rem;
 
         &:hover {
             color: white;
+            border-right: #bbb solid 1px;
+            border-left: #bbb solid 1px;
             transition: 0.3s;
         }
     }
