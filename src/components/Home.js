@@ -1,5 +1,5 @@
 import React from 'react'
-import { Jumbotron as Jumbo, Container } from 'react-bootstrap'
+import { Jumbotron as Jumbo, Container, Button,Row,Col } from 'react-bootstrap'
 import styled from 'styled-components'
 
 const Styles = styled.div`
@@ -39,6 +39,14 @@ const Home = () => (
                 <p> This is a sample of what our homepage could look like. Basic structure.
                     Many components have been made but not used just yet.
                 </p>
+                <Row className="mt-5">
+                    <Col>
+                        <Button>Log In</Button>
+                    </Col>
+                    <Col>
+                        <Button>Sign Up</Button>
+                    </Col>
+                </Row>
             </Container>
         </Jumbo>
     </Styles>

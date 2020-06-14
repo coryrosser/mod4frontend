@@ -1,43 +1,96 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Row, Col } from 'react-bootstrap'
-import styled from 'styled-components'
-import Home from './components/Home'
-import User from './components/User'
-import NoMatch from './components/NoMatch'
 import TopBar from './containers/TopBar'
 import ChatContainer from './containers/ChatContainer'
 import Navigation from './components/Navigation'
 import './App.css';
+import MainContainer from './containers/MainContainer';
+import { Redirect, RedirectProps } from 'react-router-dom'
 
-const ColStyles = {
-  border: "#333 solid 1px"
+class App extends React.Component {
+
+  
+  state = {
+    fetchDone: false,
+    users: [],
+    projects: [],
+    loggedIn: false,
+    current_user: {},
+    chatting: true,
+
+}
+componentDidMount() {
+  this.fetchUsers()
+    
+}
+onLogin = (credentials) => {
+  console.log("login func")
 }
 
-function App() {
-  return (
+createUser = (userToCreate) => {
+    debugger
+    fetch('http://localhost:3000/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(userToCreate)
+    })
+    .then(res=> res.json())
+    .then(newUser => {
+        this.setState({current_user: newUser})
+        this.setState({loggedIn: true})
+    })
+}
+
+fetchUsers = () => {
+  this.setState({fetchDone: false})
+  fetch('http://localhost:3000/users')
+  .then(res => res.json())
+  .then(userData => {
+      this.setState({users: userData})
+      this.randomUser(this.state.users)
+      this.setState({fetchDone: true})
+  })
+}
+randomUser(array) {
+  this.setState({current_user: array[1]})
+}
+
+  render() {
+      return (
     <React.Fragment>
-      <TopBar />
+      <TopBar/>
         <Row>
           <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
             <Navigation/>
           </Col>
           <Col md={8} style={{ paddingLeft: 1, paddingRight: 0 }}>
-          <Router>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/home" component={Home} />
-              <Route path="/user" component={User} />
-              <Route component={NoMatch} />
-            </Switch>
-            </Router>
+            {this.state.fetchDone ? 
+            <MainContainer
+            loggedIn={this.state.loggedIn}
+            createUser={this.createUser}
+            onLogin={this.onLogin}
+            users={this.state.users} 
+            user={this.state.current_user}/>
+              :
+              <div> Loading </div>}
+            
           </Col>
           <Col style={{ paddingLeft: 1, paddingRight: 0 }}>
-          <ChatContainer />
+            {this.state.chatting ? 
+              <ChatContainer />
+              :
+              <p onClick={() => {this.setState({chatting: true})}}> Click to chat. Feature Coming soon</p>
+            }
+          
           </Col>
         </Row>
     </React.Fragment>
   );
+  }
+
 }
 
 export default App;
