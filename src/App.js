@@ -5,7 +5,14 @@ import ChatContainer from './containers/ChatContainer'
 import Navigation from './components/Navigation'
 import './App.css';
 import MainContainer from './containers/MainContainer';
-import { Redirect, RedirectProps } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import Home from './components/Home'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
+import User from './components/User'
+import NoMatch from './components/NoMatch'
+import Feed from './containers/Feed'
+import LogOut from './components/Logout'
 
 class App extends React.Component {
 
@@ -62,7 +69,9 @@ login = (userInfo,history) => {
     .then(res=> res.json())
     .then(userInfo => {
         localStorage.setItem("Auth-Key", userInfo.token)
-        this.setState({loggedIn: true, current_user: userInfo.user}, () => history.push("/home"))
+        this.setState({loggedIn: true, current_user: userInfo.user}, ()=>{
+          console.log(this.state.current_user)
+        })
     })
 }
 
@@ -70,7 +79,7 @@ fetchUsers = () => {
   fetch('http://localhost:3000/users')
   .then(res => res.json())
   .then(userData => {
-      this.setState({users: userData, fetchDone: true, current_user: userData[1]})
+      this.setState({users: userData, fetchDone: true})
   })
 }
 
@@ -84,14 +93,33 @@ fetchUsers = () => {
           </Col>
           <Col md={8} style={{ paddingLeft: 1, paddingRight: 0 }}>
             {this.state.fetchDone ? 
-            <MainContainer
-            loggedIn={this.state.loggedIn}
-            createUser={this.createUser}
-            login={this.login}
-            logout={this.logout}
-            onLogin={this.onLogin}
-            users={this.state.users} 
-            user={this.state.current_user}/>
+            // <MainContainer
+            // loggedIn={this.state.loggedIn}
+            // createUser={this.createUser}
+            // login={this.login}
+            // logout={this.logout}
+            // onLogin={this.onLogin}
+            // users={this.state.users} 
+            // user={this.state.current_user}/>
+              <Router>
+                <Switch>
+                    <Route exact path="/" component={Home} />
+                    <Route exact path="/home" component={Home} />
+                    <Route exact path="/user">
+                        <User user={this.state.current_user}/>
+                    </Route>
+                    <Route exact path="/login">
+                        <Login login={this.login}/>
+                    </Route>
+                    <Route exact path="/signup">
+                        <SignUp createUser={this.createUser}/>
+                    </Route>
+                    <Route exact path ="/logout">
+                        <LogOut logout={this.logout}/>
+                    </Route>
+                    <Route component={NoMatch} />
+                </Switch>
+              </Router>
               :
               <div> Loading </div>}
             
