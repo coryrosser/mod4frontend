@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, Row, Col, Button, Image, Link, ListGroupItem, ListGroup} from 'react-bootstrap'
+import {Card, Row, Col, Button, Image, ListGroupItem, ListGroup, Nav} from 'react-bootstrap'
 
 const Project = (props) => {
     console.log(props.project)
@@ -15,7 +15,13 @@ const Project = (props) => {
                 </Card.Text>
             </Card.Body>
             <ListGroup className="list-group-flush">
-                <ListGroupItem>JavaScript</ListGroupItem>
+                {
+                    props.forFeed && (
+                        <ListGroupItem>
+                            Created By: <Nav.Link href={`/user/${project.user.username}`}> {project.user.username}</Nav.Link>
+                        </ListGroupItem>
+                    )
+                }
                 <ListGroupItem>Rails</ListGroupItem>
                 <ListGroupItem>React</ListGroupItem>
             </ListGroup>

@@ -25,7 +25,10 @@ class User extends React.Component {
         lowerView: 1,
     }
     render() {
+        console.log(this.props)
         return (
+        //<></>
+            
             <Styles>
                 <Container fluid>
                     <Row className="top-row justify-content-center pt-4">
