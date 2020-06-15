@@ -15,7 +15,7 @@ const MainContainer = (props) => {
              <Feed />
             :  */}
             
-        <Router>
+            <Router>
         <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/home" component={Home} />
@@ -34,7 +34,7 @@ const MainContainer = (props) => {
             <Route component={NoMatch} />
         </Switch>
         </Router>
-    }
+    
     </React.Fragment>
     )
 }

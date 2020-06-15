@@ -1,8 +1,7 @@
 import React from 'react'
 import { InputGroup,DropdownButton, Dropdown, FormControl } from 'react-bootstrap'
 
-class TopSearch extends React.Component {
-    render () {
+const TopSearch = (props) => {
         return (
             <InputGroup className="mb-1" size="sm">
                 <DropdownButton
@@ -17,7 +16,6 @@ class TopSearch extends React.Component {
                 <FormControl aria-describedby="basic-addon1" placeholder="Search for users or projects..."/>
             </InputGroup>
         )
-    }
 }
 
 export default TopSearch

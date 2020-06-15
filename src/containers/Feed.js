@@ -10,8 +10,7 @@ class Feed extends React.Component {
         fetch('http://localhost:3000/projects')
         .then(res=> res.json())
         .then(projectData => {
-            this.setState({projects: projectData})
-            this.setState({isLoading: false})
+            this.setState({projects: projectData.reverse(),isLoading: false})
         })
     }
     render() {

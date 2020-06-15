@@ -5,7 +5,14 @@ import ChatContainer from './containers/ChatContainer'
 import Navigation from './components/Navigation'
 import './App.css';
 import MainContainer from './containers/MainContainer';
-import { Redirect, RedirectProps } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect, BrowserRouter } from 'react-router-dom';
+import Home from './components/Home'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
+import User from './components/User'
+import NoMatch from './components/NoMatch'
+import Feed from './containers/Feed'
+import LogOut from './components/Logout'
 
 class App extends React.Component {
 
@@ -21,8 +28,6 @@ class App extends React.Component {
 }
 componentDidMount() {
   this.fetchUsers()
-  if(localStorage.getItem("Auth-Key"))
-    this.setState({loggedIn: true})
 }
 onLogin = (credentials) => {
   console.log("login func")
@@ -40,6 +45,7 @@ createUser = (userToCreate,history) => {
     .then(userInfo => {
       if(!userInfo.errors){
         localStorage.setItem("Auth-Key", userInfo.token)
+        localStorage.setItem("uid", userInfo.user.name)
         this.setState({loggedIn: true}, () => history.push("/home"))
       }
     })
@@ -62,7 +68,10 @@ login = (userInfo,history) => {
     .then(res=> res.json())
     .then(userInfo => {
         localStorage.setItem("Auth-Key", userInfo.token)
-        this.setState({loggedIn: true, current_user: userInfo.user}, () => history.push("/home"))
+        localStorage.setItem("uid", userInfo.user.name)
+        this.setState({loggedIn: true, current_user: userInfo.user}, ()=>{
+          history.push("/home")
+        })
     })
 }
 
@@ -70,8 +79,20 @@ fetchUsers = () => {
   fetch('http://localhost:3000/users')
   .then(res => res.json())
   .then(userData => {
-      this.setState({users: userData, fetchDone: true, current_user: userData[1]})
+    if(localStorage.getItem("Auth-Key")){
+      this.setState({users: userData, 
+        fetchDone: true, 
+        loggedIn: true, 
+        current_user: userData.find(user => user.name === localStorage.getItem('uid'))
+      })}
+    else
+    this.setState({users: userData, fetchDone: true})
   })
+}
+
+findUser() {
+  debugger
+  
 }
 
   render() {
@@ -84,14 +105,43 @@ fetchUsers = () => {
           </Col>
           <Col md={8} style={{ paddingLeft: 1, paddingRight: 0 }}>
             {this.state.fetchDone ? 
-            <MainContainer
-            loggedIn={this.state.loggedIn}
-            createUser={this.createUser}
-            login={this.login}
-            logout={this.logout}
-            onLogin={this.onLogin}
-            users={this.state.users} 
-            user={this.state.current_user}/>
+            // <MainContainer
+            // loggedIn={this.state.loggedIn}
+            // createUser={this.createUser}
+            // login={this.login}
+            // logout={this.logout}
+            // onLogin={this.onLogin}
+            // users={this.state.users} 
+            // user={this.state.current_user}/>
+              <Router>
+                <Switch>
+                    <Route exact path="/" component={Home} />
+                    <Route exact path="/home">
+                      {
+                        this.state.loggedIn ? 
+                          <Feed/>
+                          :
+                          <Home/>
+                      }
+                    </Route>
+                    <Route exact path="/user">
+                      <User user={this.state.current_user}/>
+                    </Route>
+                    <Route exact path="/user/:username">
+                      <User user={this.findUser}/>
+                    </Route>
+                    <Route exact path="/login">
+                      <Login login={this.login}/>
+                    </Route>
+                    <Route exact path="/signup">
+                      <SignUp createUser={this.createUser}/>
+                    </Route>
+                    <Route exact path ="/logout">
+                      <LogOut logout={this.logout}/>
+                    </Route>
+                    <Route component={NoMatch} />
+                </Switch>
+              </Router>
               :
               <div> Loading </div>}
             

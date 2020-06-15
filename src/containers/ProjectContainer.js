@@ -5,7 +5,7 @@ const ProjectContainer = (props) => {
     console.log(props)
     return (
             props.projects.map((project) => { 
-        return <Project project={project} />
+        return <Project project={project} forFeed={props.forFeed}/>
         })
     )
 
