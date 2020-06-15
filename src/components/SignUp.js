@@ -1,5 +1,6 @@
 import React from 'react'
 import { Form, Button } from 'react-bootstrap'
+import { withRouter } from "react-router";
 
 
 import styled from 'styled-components'
@@ -59,8 +60,6 @@ class Signup extends React.Component {
         this.setState({password: value})
     }
 
-
-
     render() {
         return(
             // <Styles>
@@ -68,7 +67,7 @@ class Signup extends React.Component {
             <Form className="form"  
             onSubmit={(e) => {
                 e.preventDefault()
-                this.props.createUser(this.state)
+                this.props.createUser({user: this.state}, this.props.history)
             }}>
                 <Form.Group controlId="formBasicEmail">
                     <Form.Label>Name</Form.Label>
@@ -113,4 +112,4 @@ class Signup extends React.Component {
     }
 }
 
-export default Signup
+export default withRouter(Signup)

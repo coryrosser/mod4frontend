@@ -21,56 +21,74 @@ class App extends React.Component {
 }
 componentDidMount() {
   this.fetchUsers()
-    
+  if(localStorage.getItem("Auth-Key"))
+    this.setState({loggedIn: true})
 }
 onLogin = (credentials) => {
   console.log("login func")
 }
 
-createUser = (userToCreate) => {
-    debugger
-    fetch('http://localhost:3000/users', {
+createUser = (userToCreate,history) => {
+    fetch('http://localhost:3000/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        credentials: 'same-origin',
         body: JSON.stringify(userToCreate)
     })
     .then(res=> res.json())
-    .then(newUser => {
-        this.setState({current_user: newUser})
-        this.setState({loggedIn: true})
+    .then(userInfo => {
+      if(!userInfo.errors){
+        localStorage.setItem("Auth-Key", userInfo.token)
+        this.setState({loggedIn: true}, () => history.push("/home"))
+      }
+    })
+}
+
+logout = (history) => {
+  localStorage.clear()
+  this.setState({loggedIn: false, current_user: {}}, () => history.push("/home"))
+}
+
+
+login = (userInfo,history) => {
+  fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userInfo)
+    })
+    .then(res=> res.json())
+    .then(userInfo => {
+        localStorage.setItem("Auth-Key", userInfo.token)
+        this.setState({loggedIn: true, current_user: userInfo.user}, () => history.push("/home"))
     })
 }
 
 fetchUsers = () => {
-  this.setState({fetchDone: false})
   fetch('http://localhost:3000/users')
   .then(res => res.json())
   .then(userData => {
-      this.setState({users: userData})
-      this.randomUser(this.state.users)
-      this.setState({fetchDone: true})
+      this.setState({users: userData, fetchDone: true, current_user: userData[1]})
   })
-}
-randomUser(array) {
-  this.setState({current_user: array[1]})
 }
 
   render() {
       return (
-    <React.Fragment>
-      <TopBar/>
+    <>
+      <TopBar loggedIn={this.state.loggedIn}/>
         <Row>
           <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
-            <Navigation/>
+            <Navigation loggedIn={this.state.loggedIn}/>
           </Col>
           <Col md={8} style={{ paddingLeft: 1, paddingRight: 0 }}>
             {this.state.fetchDone ? 
             <MainContainer
             loggedIn={this.state.loggedIn}
             createUser={this.createUser}
+            login={this.login}
+            logout={this.logout}
             onLogin={this.onLogin}
             users={this.state.users} 
             user={this.state.current_user}/>
@@ -87,7 +105,7 @@ randomUser(array) {
           
           </Col>
         </Row>
-    </React.Fragment>
+    </>
   );
   }
 

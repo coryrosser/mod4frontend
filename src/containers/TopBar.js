@@ -24,6 +24,13 @@ const Styles = styled.div`
     }
 `;
 
+const loginLogout = (props) => {
+    if(props.loggedIn)
+        return <Nav.Item><Nav.Link href="/logout">Log Out</Nav.Link></Nav.Item>
+    else
+        return <Nav.Item><Nav.Link href="/login">Log In</Nav.Link></Nav.Item>
+}
+
 const TopBar = (props) => (
     <Styles>
         <Navbar expand="lg">
@@ -37,7 +44,7 @@ const TopBar = (props) => (
                 </Col>
                 <Col md={4}>
                     <Nav className="ml-auto">
-                    <Nav.Item><Nav.Link href="/login">Login</Nav.Link></Nav.Item>
+                    {loginLogout(props)}
                     <Nav.Item><Nav.Link href="/signup">Sign Up</Nav.Link></Nav.Item>
                 </Nav>
                 </Col>

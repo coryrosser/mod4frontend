@@ -1,6 +1,7 @@
 import React from 'react'
 import { Form, Button } from 'react-bootstrap'
 import styled from 'styled-components'
+import { withRouter } from "react-router";
 
 const Styles = styled.div`
     background: url("https://images.unsplash.com/photo-1549281899-f75600a24107?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80");
@@ -33,31 +34,46 @@ const Styles = styled.div`
 
 class Login extends React.Component {
     state={
-        email: '',
+        username: '',
         password: ''
+    }
+
+    setUsername = (value) => {
+        this.setState({username: value})
+    }
+    setPassword = (value) => {
+        this.setState({password: value})
     }
 
     render() {
         return(
-            <Styles>
-                <div className="overlay"></div>
-                <Form className="form">
-                    <Form.Group controlId="formBasicEmail">
+            // <Styles>
+                // <div className="overlay"></div> */
+                <Form 
+                className="form"
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    this.props.login({user: this.state},this.props.history)
+                }}
+                >
+                    <Form.Group controlId="formBasicUsername">
                         <Form.Label>Username</Form.Label>
-                        <Form.Control type="text" placeholder="Enter username" />
+                        <Form.Control type="Username" placeholder="Enter Username" 
+                        onChange={(e) => {this.setUsername(e.target.value)}}
+                        />
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+                        <Form.Control type="password" placeholder="Password" value={this.state.password} onChange={(e) => this.setPassword(e.target.value)}/>
                     </Form.Group>
                     <Button variant="primary" type="submit">
                         Submit
                     </Button>
                 </Form>
-            </Styles>
+            // </Styles>
         )
     }
 }
 
-export default Login
+export default withRouter(Login)
