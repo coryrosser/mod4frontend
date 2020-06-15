@@ -5,7 +5,6 @@ import ChatContainer from './containers/ChatContainer'
 import Navigation from './components/Navigation'
 import './App.css';
 import MainContainer from './containers/MainContainer';
-import { Redirect, RedirectProps } from 'react-router-dom'
 
 class App extends React.Component {
 
@@ -66,7 +65,11 @@ randomUser(array) {
           <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
             <Navigation/>
           </Col>
-          <Col md={8} style={{ paddingLeft: 1, paddingRight: 0 }}>
+          <Col md={8} style={{ paddingLeft: 0, paddingRight: 0 }}>
+            {/* Had a ton of trouble bc this content relied on a
+             fetch to be done before it would render. Had to use 
+             a new state that i called fetchDone in order to tell react to
+             wait until thats "true" to render the main container. */}
             {this.state.fetchDone ? 
             <MainContainer
             loggedIn={this.state.loggedIn}
@@ -78,7 +81,7 @@ randomUser(array) {
               <div> Loading </div>}
             
           </Col>
-          <Col style={{ paddingLeft: 1, paddingRight: 0 }}>
+          <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
             {this.state.chatting ? 
               <ChatContainer />
               :

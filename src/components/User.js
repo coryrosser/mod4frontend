@@ -59,6 +59,9 @@ class User extends React.Component {
                                 onClick={() => {this.setState({lowerView: 2})}}>
                                     See Friends
                                 </Button>
+                                <Button variant="success">
+                                    Add Friend
+                                </Button>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -72,6 +75,10 @@ class User extends React.Component {
                                 <Button variant="primary" 
                                 onClick={() => {this.setState({lowerView: 1}, console.log("switch"))}}
                                 >See Projects
+                                </Button>
+                                
+                                <Button variant="success">
+                                    Add Project
                                 </Button>
                                 </Card.Body>
                             </Card>

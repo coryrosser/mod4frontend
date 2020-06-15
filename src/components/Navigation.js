@@ -14,6 +14,7 @@ const Styles = styled.div`
     }
     .item {
         background-color: #333;
+        text-align: center;
         
     }
     .fragment {
