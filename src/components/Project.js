@@ -2,7 +2,6 @@ import React from 'react'
 import {Card, Row, Col, Button, Image, ListGroupItem, ListGroup, Nav} from 'react-bootstrap'
 
 const Project = (props) => {
-    console.log(props.project)
     let project = props.project
     return (
         <Col className="pt-3" xs={{span: 5, offset: 1 }}>

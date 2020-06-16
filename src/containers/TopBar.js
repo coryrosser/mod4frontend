@@ -1,5 +1,5 @@
 import React from 'react'
-import { Nav, Navbar, Row, Col } from 'react-bootstrap'
+import { Nav, Navbar, Row, Col, Popover } from 'react-bootstrap'
 import styled from 'styled-components'
 import TopSearch from '../components/TopSearch'
 
@@ -40,7 +40,15 @@ const TopBar = (props) => (
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Col md={6}>
-                <TopSearch />
+                <TopSearch 
+                handleSearchSelect={props.handleSearchSelect}
+                users={props.users}
+                projects={props.projects}
+                searchType={props.searchType}
+                changeSearchType={props.changeSearchType}
+                searchTerm={props.searchTerm}
+                setSearchTerm={props.setSearchTerm}/>
+                
                 </Col>
                 <Col md={4}>
                     <Nav className="ml-auto">

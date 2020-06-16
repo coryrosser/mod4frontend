@@ -5,19 +5,40 @@ import ProjectContainer from '../containers/ProjectContainer';
 import UserFriends from '../components/UserFriends'
 
 const Styles = styled.div`
+    overflow: scroll;
+    max-height: 95vh;
     .top-row {
-        background: #f7f7f7;
         align-items: center;
+        color: #f7f7f7;
         border-bottom: #333 solid 1px;
     }
     .mid-row {
-        background: #f6f6f6;
         padding-bottom: 1rem;
 
     }
     .bottom-row {
         text-align: center;
     }
+    .banner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        size: cover;
+        z-index:-1;
+        filter: blur(6px);
+    }
+    .overlay {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background-color: rgba(0, 0, 0, .6);
+    }
+
 `;
 
 class User extends React.Component {
@@ -51,8 +72,16 @@ class User extends React.Component {
             <Styles>
                 <Container fluid>
                     <Row className="top-row justify-content-center pt-4">
+                        {this.props.user.banner_img ? 
+                        <>
+                        <Image className="banner" src={this.props.user.banner_img} />
+                        <div className="overlay"></div>
+                        </>
+                        : ''
+                        }
                         <Col 
                         md={4}>
+                            
                             <Image 
                             className="pb-1"
                             src={this.props.user.img} 

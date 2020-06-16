@@ -17,7 +17,7 @@ const Styles = styled.div`
         
     }
     .fragment {
-        height: 100vh;
+        height: 95vh;
         background-color: #333;
     }
 `;
