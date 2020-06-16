@@ -20,14 +20,17 @@ class App extends React.Component {
   state = {
     fetchDone: false,
     users: [],
-    projects: [],
+    //made allProjects to avoid messing up anywhere projects is passed.
+    allProjects: [],
     loggedIn: false,
     current_user: {},
-    chatting: true,
-
+    chatting: false,
+    searchType: '',
+    searchTerm: '',
 }
 componentDidMount() {
   this.fetchUsers()
+  this.fetchProjects()
 }
 onLogin = (credentials) => {
   console.log("login func")
@@ -67,11 +70,14 @@ login = (userInfo,history) => {
     })
     .then(res=> res.json())
     .then(userInfo => {
+      if(!userInfo.msg) {
         localStorage.setItem("Auth-Key", userInfo.token)
         localStorage.setItem("uid", userInfo.user.name)
         this.setState({loggedIn: true, current_user: userInfo.user}, ()=>{
           history.push("/home")
-        })
+        })} else {
+          alert(userInfo.msg)
+        }
     })
 }
 
@@ -84,9 +90,17 @@ fetchUsers = () => {
         fetchDone: true, 
         loggedIn: true, 
         current_user: userData.find(user => user.name === localStorage.getItem('uid'))
-      })}
+      }, ()=>console.log("done"))}
     else
     this.setState({users: userData, fetchDone: true})
+  })
+}
+
+fetchProjects = () => {
+  fetch('http://localhost:3000/projects')
+  .then(res => res.json())
+  .then(projectData => {
+    this.setState({allProjects: projectData})
   })
 }
 
@@ -94,11 +108,62 @@ findUser() {
   debugger
   
 }
+  changeSearchType = (type) => {
+    this.setState({searchType: type})
+    console.log(type)
+  }
+  setSearchTerm = (term) => {
+    this.setState({searchTerm: term}, () => {console.log(term)})
+  }
+
+  
+  handleSearchSelect = (selection, type) => {
+    console.log(selection)
+    console.log(type)
+    if (type === "Users" && selection) {
+      //if the search was for a user, go to user page. 
+      let user = this.state.users.find((user) => user.name == selection)
+      console.log(user)
+    } else if (type === "Projects" && selection) {
+      //search for project? get project and find the user, then go to that persons page
+      let project = this.state.allProjects.find((project) => project.name == selection)
+      let user = this.state.users.find((user) => user.username === project.user.username)
+      console.log(user, project)
+    } else {
+      alert("There was a problem with your search. Please try again.")
+    }
+  }
+
+  postProject = (project) => {
+    fetch('http://localhost:3000/projects', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({project: project})
+    })
+    .then(res => res.json())
+    .then(projectData => {
+        if(!projectData.errors) {
+            this.setState({allProjects: [...this.state.allProjects, projectData]},
+              () => console.log(projectData))
+        } 
+    })
+    .catch(errors => alert(errors))
+}
 
   render() {
       return (
     <>
-      <TopBar loggedIn={this.state.loggedIn}/>
+      <TopBar 
+      handleSearchSelect={this.handleSearchSelect}
+      users={this.state.users}
+      projects={this.state.allProjects}
+      searchType={this.state.searchType}
+      loggedIn={this.state.loggedIn}
+      changeSearchType={this.changeSearchType}
+      setSearchTerm={this.setSearchTerm}
+      searchTerm={this.state.searchTerm}/>
         <Row>
           <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
             <Navigation loggedIn={this.state.loggedIn}/>
@@ -117,9 +182,12 @@ findUser() {
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route exact path="/home">
-                      {
+                    {
                         this.state.loggedIn ? 
-                          <Feed/>
+                          <Feed 
+                          postProject={this.postProject}
+                          projects={this.state.allProjects}
+                          current_user={this.state.current_user}/>
                           :
                           <Home/>
                       }
@@ -146,7 +214,9 @@ findUser() {
               <div> Loading </div>}
             
           </Col>
-          <Col style={{ paddingLeft: 1, paddingRight: 0 }}>
+          <Col
+          className="h-95"
+          style={{ paddingLeft: 1, paddingRight: 0, }}>
             {this.state.chatting ? 
               <ChatContainer />
               :
