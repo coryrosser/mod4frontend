@@ -25,75 +25,138 @@ class App extends React.Component {
     current_user: {},
     chatting: true,
 
-}
-componentDidMount() {
-  this.fetchUsers()
-}
-onLogin = (credentials) => {
-  console.log("login func")
-}
+  }
+  componentDidMount() {
+    this.fetchUsers()
+  }
+  onLogin = (credentials) => {
+    console.log("login func")
+  }
 
-createUser = (userToCreate,history) => {
-    fetch('http://localhost:3000/signup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userToCreate)
+  createUser = (userToCreate,history) => {
+      fetch('http://localhost:3000/signup', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userToCreate)
+      })
+      .then(res=> res.json())
+      .then(userInfo => {
+        if(!userInfo.errors){
+          localStorage.setItem("Auth-Key", userInfo.token)
+          localStorage.setItem("uid", userInfo.user.username)
+          this.setState({loggedIn: true}, () => history.push("/home"))
+        }
+      })
+  }
+
+  logout = (history) => {
+    localStorage.clear()
+    this.setState({loggedIn: false, current_user: {}}, () => history.push("/home"))
+  }
+
+
+  login = (userInfo,history) => {
+    fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userInfo)
+      })
+      .then(res=> res.json())
+      .then(userInfo => {
+          localStorage.setItem("Auth-Key", userInfo.token)
+          localStorage.setItem("uid", userInfo.user.username)
+          this.setState({loggedIn: true, current_user: userInfo.user}, ()=>{
+            history.push("/home")
+          })
+      })
+  }
+
+  fetchUsers = () => {
+    fetch('http://localhost:3000/users')
+    .then(res => res.json())
+    .then(userData => {
+      if(localStorage.getItem("Auth-Key")){
+        this.setState({users: userData, 
+          fetchDone: true, 
+          loggedIn: true, 
+          current_user: userData.find(user => user.username === localStorage.getItem('uid'))
+        })}
+      else
+      this.setState({users: userData, fetchDone: true})
     })
-    .then(res=> res.json())
-    .then(userInfo => {
-      if(!userInfo.errors){
-        localStorage.setItem("Auth-Key", userInfo.token)
-        localStorage.setItem("uid", userInfo.user.name)
-        this.setState({loggedIn: true}, () => history.push("/home"))
-      }
+  }
+
+  addFriend = (friend) => {
+    fetch('http://localhost:3000/user_friends', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "user_friend": {
+        "friend_username": friend.username,
+        "user_username": this.state.current_user.username,
+        "accepted": false
+      }})
     })
-}
-
-logout = (history) => {
-  localStorage.clear()
-  this.setState({loggedIn: false, current_user: {}}, () => history.push("/home"))
-}
-
-
-login = (userInfo,history) => {
-  fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userInfo)
+    .then(res => res.json())
+    .then(res => {
+      console.log(res)
     })
-    .then(res=> res.json())
-    .then(userInfo => {
-        localStorage.setItem("Auth-Key", userInfo.token)
-        localStorage.setItem("uid", userInfo.user.name)
-        this.setState({loggedIn: true, current_user: userInfo.user}, ()=>{
-          history.push("/home")
-        })
+  }
+
+  acceptFriend = (friend) => {
+    fetch('http://localhost:3000/user_friends', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "user_friend": {
+        "friend_username": friend.username,
+        "user_username": this.state.current_user.username,
+        "accepted": true
+      }})
     })
-}
+    .then(res => res.json())
+    .then(res => {
+      console.log(res)
+    })
+    fetch(`http://localhost:3000/friend`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "user_friend": {
+        "friend_username": this.state.current_user.username,
+        "user_username": friend.username,
+        "accepted": true
+      }})
+    })
+  }
 
-fetchUsers = () => {
-  fetch('http://localhost:3000/users')
-  .then(res => res.json())
-  .then(userData => {
-    if(localStorage.getItem("Auth-Key")){
-      this.setState({users: userData, 
-        fetchDone: true, 
-        loggedIn: true, 
-        current_user: userData.find(user => user.name === localStorage.getItem('uid'))
-      })}
-    else
-    this.setState({users: userData, fetchDone: true})
-  })
-}
+  findUser(props) {
+    return <User
+      user={this.state.users.find(user => user.username === props.match.params.username)}
+      currentUser = {this.state.current_user}
+      addFriend={this.addFriend}
+      acceptFriend={this.acceptFriend}
+      pending={this.findPendingFriends()}
+    />
+  }
 
-findUser() {
-  debugger
-  
-}
+  findPendingFriends(){
+    let pending = this.state.users.filter(user => {
+      let pendingUsernames = user.pending_friends.map(pf=>pf.username)
+      return pendingUsernames.includes(this.state.current_user.username)
+    })
+    return pending
+  }
 
   render() {
       return (
@@ -105,17 +168,11 @@ findUser() {
           </Col>
           <Col md={8} style={{ paddingLeft: 1, paddingRight: 0 }}>
             {this.state.fetchDone ? 
-            // <MainContainer
-            // loggedIn={this.state.loggedIn}
-            // createUser={this.createUser}
-            // login={this.login}
-            // logout={this.logout}
-            // onLogin={this.onLogin}
-            // users={this.state.users} 
-            // user={this.state.current_user}/>
               <Router>
                 <Switch>
-                    <Route exact path="/" component={Home} />
+                    <Route exact path="/">
+                      <Home/>
+                    </Route>
                     <Route exact path="/home">
                       {
                         this.state.loggedIn ? 
@@ -125,11 +182,14 @@ findUser() {
                       }
                     </Route>
                     <Route exact path="/user">
-                      <User user={this.state.current_user}/>
+                      <User 
+                        user={this.state.current_user} 
+                        currentUser={this.state.current_user} 
+                        acceptFriend={this.acceptFriend}
+                        pending={this.findPendingFriends()}
+                      />
                     </Route>
-                    <Route exact path="/user/:username">
-                      <User user={this.findUser}/>
-                    </Route>
+                    <Route exact path="/user/:username" render={(props)=>this.findUser(props)}/>
                     <Route exact path="/login">
                       <Login login={this.login}/>
                     </Route>
