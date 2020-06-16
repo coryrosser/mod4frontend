@@ -1,19 +1,32 @@
 import React from 'react'
-import { ListGroupItem, Image, Col } from 'react-bootstrap'
+import { ListGroupItem, Image, Col, Row, Button } from 'react-bootstrap'
+import { withRouter } from "react-router"
 
 const Friend = (props) => {
-    console.log(props)
     return (
-        <ListGroupItem>
-            <Col md={8}>
-                <Image 
-                src={props.user.img}
-                height={75}/>
-                <p>{props.user.name}</p>
-            </Col>
+        <ListGroupItem onClick={()=> {}}>
+            <Row>
+                <Col md={8}>
+                    <Image 
+                    src={props.user.img}
+                    height={75}/>
+                    <p>{props.user.name}</p>
+                </Col>
+            </Row>
+            {
+                props.pending && (
+                    <Row>
+                        <Col>
+                            <Button variant="success" onClick={()=>props.acceptFriend(props.user)}/>
+                        </Col>
+                        <Col>
+                            <Button variant="danger" onClick={()=>console.log('approved')}/>
+                        </Col>
+                    </Row>
+                )
+            }
         </ListGroupItem>
     )
-
 }
 
-export default Friend
+export default withRouter(Friend)

@@ -3,7 +3,6 @@ import { ListGroup, Row, Container } from 'react-bootstrap'
 import Friend from './Friend'
 
 const UserFriends = (props) => {
-    console.log(props)
     return (
         <Container className="mt-2">
             <h2>Friends List</h2>
@@ -12,7 +11,7 @@ const UserFriends = (props) => {
             <ListGroup className="">
             {props.friends.map((friend) => {
                 return (
-                    <Friend user={friend} />
+                    <Friend user={friend} pending={props.pending} acceptFriend={props.acceptFriend}/>
                 )
             })}
             </ListGroup>

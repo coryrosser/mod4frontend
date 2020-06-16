@@ -45,11 +45,30 @@ class User extends React.Component {
     state= {
         lowerView: 1,
     }
+
+    isCurrentUser = () => this.props.user.username === this.props.currentUser.username ? true : false
+
+    isFriend = () => {
+        let friendsNames = this.props.user.friends.map(friend => friend.username)
+        return friendsNames.includes(this.props.currentUser.username)
+    }
+
+    isPending = () => { 
+        let pending = this.props.currentUser.pending_friends.map(friend => friend.username)
+        return pending.includes(this.props.user.username)
+    }
+
+    lowerView = () => {
+        if(this.state.lowerView === 1)
+            return <ProjectContainer projects={this.props.user.projects}/>
+        else if(this.state.lowerView === 2)
+            return <UserFriends friends={this.props.user.friends} pending={false} acceptFriend={this.acceptFriend}/>
+        else
+            return <UserFriends friends={this.props.pending} pending={true} acceptFriend={this.props.acceptFriend}/>
+    }
+
     render() {
-        console.log(this.props)
-        return (
-        //<></>
-            
+        return (            
             <Styles>
                 <Container fluid>
                     <Row className="top-row justify-content-center pt-4">
@@ -73,10 +92,25 @@ class User extends React.Component {
                             <h1 className="user-name ml-5">{this.props.user.name}</h1>
                             <h3 className="ml-5">About: </h3> 
                             <p className="ml-5">{this.props.user.bio}</p>
+                            {
+                                !this.isCurrentUser() && !this.isFriend() && !this.isPending() && (
+                                    <Button variant="primary" 
+                                        onClick={() => {this.props.addFriend(this.props.user)}}>
+                                        Add Friend
+                                    </Button>
+                                )
+                            }
+                            {
+                                !this.isCurrentUser() && !this.isFriend() && this.isPending() && (
+                                    <Button variant="danger">
+                                        Pending
+                                    </Button>
+                                )
+                            }
                         </Col>
                     </Row>
                     <Row className="mid-row pt-4">
-                        <Col xs={{offset: 2}}>
+                        <Col xs={{offset: 0}}>
                             <Card style={{ width: '18rem' }}>
                                 <Card.Body>
                                 <Card.Title>{this.props.user.name}'s Friends:</Card.Title>
@@ -104,13 +138,24 @@ class User extends React.Component {
                                 </Card.Body>
                             </Card>
                         </Col>
+                        <Col xs={{offset: 0}} >
+                            <Card style={{ width: '18rem' }}>
+                                <Card.Body>
+                                <Card.Title>Pending Friends</Card.Title>
+                                <Card.Text>
+                                    {this.props.pending.length}
+                                </Card.Text>
+                                <Button variant="primary" 
+                                onClick={() => {this.setState({lowerView: 3})}}
+                                >
+                                    View
+                                </Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
                     </Row>
                     <Row className="bottom-row"> 
-                        {this.state.lowerView == 1 ? 
-                        <ProjectContainer projects={this.props.user.projects}/>
-                        
-                            :
-                        <UserFriends friends={this.props.user.friends}/>}
+                        {this.lowerView()}
                     </Row>
                 </Container>
             </Styles>
