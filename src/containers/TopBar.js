@@ -35,7 +35,7 @@ const TopBar = (props) => (
     <Styles>
         <Navbar expand="lg">
             <Col md={2}>
-                <Navbar.Brand href="/">Mod 4</Navbar.Brand>
+                <Navbar.Brand href="/">DevBook</Navbar.Brand>
             </Col>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">

@@ -17,7 +17,9 @@ const Styles = styled.div`
     .jumbo h1 {
         font-size: 5rem;
     }
-
+    .button {
+        z-index: 1;
+    }
     .overlay {
         background-color: black;
         opacity: 0.6;
@@ -36,17 +38,15 @@ const Home = () => (
             <div className="overlay"></div>
             <Container>
                 <h1> Welcome </h1>
-                <p> This is a sample of what our homepage could look like. Basic structure.
-                    Many components have been made but not used just yet.
+                <p> 
+                    DevBook is your new place to meet and connect with other
+                    Developers, while also being able to show off your 
+                    projects! 
                 </p>
+                <p>If you are new to GitBook, please make an account by pressing Sign Up!</p>
+                
                 <Row className="mt-5">
-                    <Col>
-                        <Button>Log In</Button>
-                    </Col>
-                    <Col>
-                        <Button>Sign Up</Button>
-                    </Col>
-                </Row>
+                    </Row>
             </Container>
         </Jumbo>
     </Styles>

@@ -4,10 +4,9 @@ import styled from 'styled-components'
 import { withRouter } from "react-router"
 
 const Styles = styled.div`
-    background: url("https://images.unsplash.com/photo-1549281899-f75600a24107?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80");
+    background: url("https://wallpaperplay.com/walls/full/2/3/2/13883.jpg");
     background-size: cover;
     position: relative;
-    z-index: -2;
     color: #f7f7f7;
     text-align: center;
     height: 100vh;
@@ -17,6 +16,7 @@ const Styles = styled.div`
         justify-content: center;
         align-items: center;
         color: #f7f7f7;
+
     }
 
     .overlay {
@@ -47,8 +47,8 @@ class Login extends React.Component {
 
     render() {
         return(
-            // <Styles>
-                // <div className="overlay"></div> */
+            <Styles>
+                <div className="overlay"></div>
                 <Form 
                 className="form"
                 onSubmit={(e) => {
@@ -71,7 +71,7 @@ class Login extends React.Component {
                         Submit
                     </Button>
                 </Form>
-            // </Styles>
+            </Styles>
         )
     }
 }

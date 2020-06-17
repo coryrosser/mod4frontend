@@ -11,7 +11,6 @@ align-items:center;
 background: url("https://images.unsplash.com/photo-1549281899-f75600a24107?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80");
 background-size: cover;
 position: relative;
-z-index: -2;
 .add-project-row {
     background: #f7f7f7;
     height: 5vh;
