@@ -15,7 +15,6 @@ class CommentSection extends React.Component {
     }
     createComments(comments) {
         return comments.map((comment) => {
-            console.log(comment)
             return (
                 <Row>
                     <Col xs={5}>@{comment.commenter.username}</Col>

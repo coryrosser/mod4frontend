@@ -12,10 +12,12 @@ import User from './components/User'
 import NoMatch from './components/NoMatch'
 import Feed from './containers/Feed'
 import LogOut from './components/Logout'
+import { StreamChat } from 'stream-chat';
+
+const chatClient = new StreamChat('5cx2ee96rmr9');
+//const userToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoicmFzcHktbWF0aC04In0.ONtVRfqubiMNjCQHAF0sdHdCdYAitG6VL28WzBL_5c8';
 
 class App extends React.Component {
-
-  
   state = {
     fetchDone: false,
     users: [],
@@ -26,7 +28,9 @@ class App extends React.Component {
     chatting: false,
     searchType: '',
     searchTerm: '',
+    channel: {},
 }
+
 componentDidMount() {
   this.fetchUsers()
   this.fetchProjects()
@@ -49,7 +53,10 @@ onLogin = (credentials) => {
         if(!userInfo.errors){
           localStorage.setItem("Auth-Key", userInfo.token)
           localStorage.setItem("uid", userInfo.user.username)
-          this.setState({loggedIn: true}, () => history.push("/home"))
+          this.setState({loggedIn: true, current_user: userInfo.user}, () => {
+            this.setChat(this.state.current_user)
+            history.push("/home")
+        })
         }
       })
   }
@@ -58,7 +65,6 @@ onLogin = (credentials) => {
     localStorage.clear()
     this.setState({loggedIn: false, current_user: {}}, () => history.push("/home"))
   }
-
 
   login = (userInfo,history) => {
     fetch('http://localhost:3000/login', {
@@ -69,10 +75,11 @@ onLogin = (credentials) => {
           body: JSON.stringify(userInfo)
       })
       .then(res=> res.json())
-      .then(userInfo => {
-          localStorage.setItem("Auth-Key", userInfo.token)
-          localStorage.setItem("uid", userInfo.user.username)
-          this.setState({loggedIn: true, current_user: userInfo.user}, ()=>{
+      .then(recievedInfo => {
+          localStorage.setItem("Auth-Key", recievedInfo.token)
+          localStorage.setItem("uid", recievedInfo.user.username)
+          this.setState({loggedIn: true, current_user: recievedInfo.user}, ()=>{
+            this.setChat(this.state.current_user)
             history.push("/home")
           })
       })
@@ -87,6 +94,8 @@ onLogin = (credentials) => {
           fetchDone: true, 
           loggedIn: true, 
           current_user: userData.find(user => user.username === localStorage.getItem('uid'))
+        }, ()=>{
+          this.setChat(this.state.current_user)
         })}
       else
       this.setState({users: userData, fetchDone: true})
@@ -173,7 +182,7 @@ onLogin = (credentials) => {
       return pendingUsernames.includes(this.state.current_user.username)
     })
     return pending
-  }
+    }
   }
 
 fetchProjects = () => {
@@ -266,11 +275,31 @@ fetchProjects = () => {
         } 
     })
     .catch(errors => alert(errors))
-}
+  }
 
   changeChatShow =() => {
     this.setState({chatting: !this.state.chatting})
   }
+
+  setChat(user){
+    if(user){
+      chatClient.setUser(
+        {
+             id: user.name,
+             name: user.username,
+             image: user.img
+        },
+        user.chat_token,
+      )
+      const channel = chatClient.channel('messaging', 'godevs', {
+        // add as many custom fields as you'd like
+        image: 'https://cdn.chrisshort.net/testing-certificate-chains-in-go/GOPHER_MIC_DROP.png',
+        name: 'Talk about Go',
+      })
+      this.setState({channel: channel}, console.log(this.state.channel))
+    }
+  }
+
   render() {
       return (
     <>
@@ -339,8 +368,12 @@ fetchProjects = () => {
           className="h-95"
           style={{ paddingLeft: 1, paddingRight: 0, }}>
               <ChatContainer 
-              changeShow={this.changeChatShow}
-              chatting={this.state.chatting}/>
+                changeShow={this.changeChatShow}
+                chatting={this.state.chatting}
+                chatClient={chatClient}
+                channel={this.state.channel}
+                loggedIn={this.state.loggedIn}
+              />
             </Col>
         </Row>
     </>
