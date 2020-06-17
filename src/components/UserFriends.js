@@ -1,6 +1,7 @@
 import React from 'react'
 import { ListGroup, Row, Container } from 'react-bootstrap'
 import Friend from './Friend'
+import styled from 'styled-components'
 
 const UserFriends = (props) => {
     return (

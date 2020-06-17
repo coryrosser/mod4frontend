@@ -5,6 +5,9 @@ import ProjectContainer from '../containers/ProjectContainer';
 import UserFriends from '../components/UserFriends'
 
 const Styles = styled.div`
+    
+    background: url("http://www.baltana.com/files/wallpapers-5/Gradient-Background-Wallpaper-16358.jpg");
+    background-size: cover;
     overflow: scroll;
     max-height: 95vh;
     .top-row {
@@ -16,8 +19,12 @@ const Styles = styled.div`
         padding-bottom: 1rem;
 
     }
+    .contain {
+        height: 45vh;
+    }
     .bottom-row {
         text-align: center;
+        height: 100%;
     }
     .banner {
         position: absolute;
@@ -90,13 +97,13 @@ class User extends React.Component {
             <Styles>
                 <Container fluid>
                     <Row className="top-row justify-content-center pt-4">
-                        {this.props.user.banner_img ? 
+                        {/* {this.props.user.banner_img ? 
                         <>
                         <Image className="banner" src={this.props.user.banner_img} />
                         <div className="overlay"></div>
                         </>
                         : ''
-                        }
+                        } */}
                         <Col 
                         md={4}>
                             
@@ -182,7 +189,9 @@ class User extends React.Component {
                         </Col>
                     </Row>
                     <Row className="bottom-row"> 
+                    <div className="contain">
                         {this.lowerView()}
+                    </div>
                     </Row>
                 </Container>
             </Styles>

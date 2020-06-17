@@ -10,7 +10,7 @@ import {Card, Row, Col, Button,
         align-items: center;
 
         .project-img {
-            height: 25%;
+            max-height: 175px;
 
         }
         .white-link {
@@ -38,10 +38,6 @@ const Project = (props) => {
                         {project.desc}
                     </Card.Text>
                 </Card.Body>
-                <ListGroup className="list-group-flush">
-                    <ListGroupItem>Rails</ListGroupItem>
-                    <ListGroupItem>React</ListGroupItem>
-                </ListGroup>
                 <Card.Body>
                     <Card.Link href={project.link}>Github</Card.Link>
                     <Card.Link href="#">Embed Video Soon</Card.Link>
@@ -84,11 +80,14 @@ const Project = (props) => {
                             disabled={project.video ? 
                                         false : true}
                             block>View Video Demo</Button>
+                            {props.current_user.projects.length > 0 ?
                             <CommentSection
                             postComment={props.postComment}
                             current_user={props.current_user}
                             comments={props.comments}
                             project={project} />
+                            : null}
+                            
                         </Col>
                         </Row>
                     </Jumbotron>
