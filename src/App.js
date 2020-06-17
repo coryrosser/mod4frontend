@@ -4,8 +4,7 @@ import TopBar from './containers/TopBar'
 import ChatContainer from './containers/ChatContainer'
 import Navigation from './components/Navigation'
 import './App.css';
-import MainContainer from './containers/MainContainer';
-import { BrowserRouter as Router, Route, Switch, Redirect, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Home from './components/Home'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
@@ -20,7 +19,7 @@ class App extends React.Component {
   state = {
     fetchDone: false,
     users: [],
-    //made allProjects to avoid messing up anywhere projects is passed.
+    comments: [],
     allProjects: [],
     loggedIn: false,
     current_user: {},
@@ -31,6 +30,7 @@ class App extends React.Component {
 componentDidMount() {
   this.fetchUsers()
   this.fetchProjects()
+  this.fetchComments()
 }
 onLogin = (credentials) => {
   console.log("login func")
@@ -147,6 +147,14 @@ onLogin = (credentials) => {
     })
   }
 
+  fetchComments() {
+    fetch('http://localhost:3000/comments')
+    .then(res => res.json())
+    .then(commentData => {
+      this.setState({comments: commentData})
+    })
+  }
+
   findUser(props) {
     return <User
       user={this.state.users.find(user => user.username === props.match.params.username)}
@@ -159,11 +167,13 @@ onLogin = (credentials) => {
   }
 
   findPendingFriends(){
+    if (this.state.current_user) {
     let pending = this.state.users.filter(user => {
       let pendingUsernames = user.pending_friends.map(pf=>pf.username)
       return pendingUsernames.includes(this.state.current_user.username)
     })
     return pending
+  }
   }
 
 fetchProjects = () => {
@@ -210,16 +220,34 @@ fetchProjects = () => {
     console.log(type)
     if (type === "Users" && selection) {
       //if the search was for a user, go to user page. 
-      let user = this.state.users.find((user) => user.name == selection)
+      let user = this.state.users.find((user) => user.name === selection)
       console.log(user)
     } else if (type === "Projects" && selection) {
       //search for project? get project and find the user, then go to that persons page
-      let project = this.state.allProjects.find((project) => project.name == selection)
+      let project = this.state.allProjects.find((project) => project.name === selection)
       let user = this.state.users.find((user) => user.username === project.user.username)
       console.log(user, project)
     } else {
       alert("There was a problem with your search. Please try again.")
     }
+  }
+  
+  postComment = (comment) => {
+    fetch('http://localhost:3000/comments', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({comment: comment})
+    })
+    .then(res => res.json())
+    .then(comment => this.setState({comments: [...this.state.comments, comment]}))
+  }
+
+  reverseProjects =(arr) => {
+    let reversed = [...arr]
+    reversed.reverse()
+    return reversed
   }
 
   postProject = (project) => {
@@ -240,6 +268,9 @@ fetchProjects = () => {
     .catch(errors => alert(errors))
 }
 
+  changeChatShow =() => {
+    this.setState({chatting: !this.state.chatting})
+  }
   render() {
       return (
     <>
@@ -267,8 +298,10 @@ fetchProjects = () => {
                     {
                         this.state.loggedIn ? 
                           <Feed 
+                          postComment={this.postComment}
+                          comments={this.state.comments}
                           postProject={this.postProject}
-                          projects={this.state.allProjects}
+                          projects={this.reverseProjects(this.state.allProjects)}
                           current_user={this.state.current_user}/>
                           :
                           <Home/>
@@ -276,6 +309,8 @@ fetchProjects = () => {
                     </Route>
                     <Route exact path="/user">
                       <User 
+                        postComment={this.postComment}
+                        comments={this.state.comments}
                         user={this.state.current_user} 
                         currentUser={this.state.current_user} 
                         acceptFriend={this.acceptFriend}
@@ -303,13 +338,10 @@ fetchProjects = () => {
           <Col
           className="h-95"
           style={{ paddingLeft: 1, paddingRight: 0, }}>
-            {this.state.chatting ? 
-              <ChatContainer />
-              :
-              <p onClick={() => {this.setState({chatting: true})}}> Click to chat. Feature Coming soon</p>
-            }
-          
-          </Col>
+              <ChatContainer 
+              changeShow={this.changeChatShow}
+              chatting={this.state.chatting}/>
+            </Col>
         </Row>
     </>
   );

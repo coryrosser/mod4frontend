@@ -4,7 +4,15 @@ import Project from '../components/Project'
 const ProjectContainer = (props) => {
     return (
             props.projects.map((project) => { 
-        return <Project project={project} forFeed={props.forFeed}/>
+        return <Project 
+                postComment={props.postComment}
+                current_user={props.current_user}
+                comments={
+                    props.comments ?
+                    props.comments.filter(comment => comment.project_id === project.id)
+                    : []}
+                project={project} 
+                forFeed={props.forFeed}/>
         })
     )
 

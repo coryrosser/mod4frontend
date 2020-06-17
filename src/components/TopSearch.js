@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead'
-import { InputGroup,DropdownButton, Dropdown, FormControl } from 'react-bootstrap'
+import { InputGroup,DropdownButton, Dropdown} from 'react-bootstrap'
 
 const TopSearch = (props) => {
     let userNames = props.users.map((user) => user.name)
