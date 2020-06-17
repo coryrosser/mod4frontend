@@ -1,5 +1,6 @@
 import React from 'react'
 import { ListGroupItem, Image, Col, Row, Button } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { withRouter } from "react-router"
 
 const Friend = (props) => {

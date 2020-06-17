@@ -43,7 +43,7 @@ const Home = () => (
                     Developers, while also being able to show off your 
                     projects! 
                 </p>
-                <p>If you are new to GitBook, please make an account by pressing Sign Up!</p>
+                <p>If you are new to DevBook, please make an account by pressing Sign Up!</p>
                 
                 <Row className="mt-5">
                     </Row>

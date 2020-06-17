@@ -80,11 +80,14 @@ const Project = (props) => {
                             disabled={project.video ? 
                                         false : true}
                             block>View Video Demo</Button>
+                            {props.current_user.projects.length > 0 ?
                             <CommentSection
                             postComment={props.postComment}
                             current_user={props.current_user}
                             comments={props.comments}
                             project={project} />
+                            : null}
+                            
                         </Col>
                         </Row>
                     </Jumbotron>
