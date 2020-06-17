@@ -1,10 +1,17 @@
 import React from 'react';
 import { Chat, Channel, ChannelHeader, Thread, Window } from 'stream-chat-react';
 import { MessageList, MessageInput } from 'stream-chat-react';
+import { Button } from 'react-bootstrap'
 import { StreamChat } from 'stream-chat';
-import styled from 'styled-components'
 import 'stream-chat-react/dist/css/index.css';
+import styled from 'styled-components'
 
+
+const Styles = styled.div`
+  background: #333;
+  height: 100%;
+  text-align:center;
+`;
 
 
 const chatClient = new StreamChat('5cx2ee96rmr9');
@@ -25,18 +32,30 @@ const channel = chatClient.channel('messaging', 'godevs', {
   name: 'Talk about Go',
 });
 
-const ChatContainer = () => (
-    
-  <Chat client={chatClient} theme={'messaging dark'}>
-    <Channel channel={channel}>
-      <Window>
-        <ChannelHeader />
-        <MessageList />
-        <MessageInput />
-      </Window>
-      <Thread />
-    </Channel>
-  </Chat>
-);
+const ChatContainer = (props) => {
+  if (props.chatting) {
+    return (
+          <Chat client={chatClient} theme={'messaging dark'}>
+          <Channel channel={channel}>
+          <Window>
+          <ChannelHeader />
+          <MessageList />
+          <MessageInput />
+          </Window>
+          <Thread />
+          </Channel>
+          </Chat>
+          )} else {
+            return (
+              <Styles>
+                <Button variant="success"
+                onClick={() => props.changeShow()}>
+                Start Friends Chat
+                </Button>
+            </Styles>
+            
+            )
+          }
+}
 
 export default ChatContainer;

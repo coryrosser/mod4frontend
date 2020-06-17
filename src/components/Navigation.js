@@ -1,6 +1,5 @@
 import React from 'react'
-import { ListGroup, ListGroupItem } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { ListGroup} from 'react-bootstrap'
 import styled from 'styled-components'
 
 const Styles = styled.div`

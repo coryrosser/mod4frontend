@@ -1,5 +1,5 @@
 import React from 'react'
-import { Nav, Navbar, Row, Col, Popover } from 'react-bootstrap'
+import { Nav, Navbar, Col} from 'react-bootstrap'
 import styled from 'styled-components'
 import TopSearch from '../components/TopSearch'
 

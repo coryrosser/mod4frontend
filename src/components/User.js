@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Grid, Row, Col, Card, Button, Image, Dropdown, DropdownButton } from 'react-bootstrap'
+import { Container, Row, Col, Card, Button, Image} from 'react-bootstrap'
 import styled from 'styled-components'
 import ProjectContainer from '../containers/ProjectContainer';
 import UserFriends from '../components/UserFriends'
@@ -60,7 +60,11 @@ class User extends React.Component {
 
     lowerView = () => {
         if(this.state.lowerView === 1)
-            return <ProjectContainer projects={this.props.user.projects}/>
+            return <ProjectContainer 
+            postComment={this.props.postComment}
+            comments={this.props.comments}
+            current_user={this.props.currentUser}
+            projects={this.props.user.projects}/>
         else if(this.state.lowerView === 2)
             return <UserFriends friends={this.props.user.friends} pending={false} acceptFriend={this.acceptFriend}/>
         else

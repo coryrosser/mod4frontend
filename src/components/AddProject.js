@@ -1,8 +1,6 @@
 import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import ProjectForm from './ProjectForm'
-import styled from 'styled-components'
-import { withRouter } from "react-router";
 
 
 class AddProject extends React.Component {
