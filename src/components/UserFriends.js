@@ -11,7 +11,14 @@ const UserFriends = (props) => {
             <ListGroup className="">
             {props.friends.map((friend) => {
                 return (
-                    <Friend user={friend} pending={props.pending} acceptFriend={props.acceptFriend}/>
+                    <Friend 
+                        user={friend} 
+                        pending={props.pending} 
+                        acceptFriend={props.acceptFriend} 
+                        setLowerView={props.setLowerView} 
+                        pendingRemaining={props.friends.length}
+                        deleteFriendRequest={props.deleteFriendRequest}
+                    />
                 )
             })}
             </ListGroup>

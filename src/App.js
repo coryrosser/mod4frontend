@@ -108,7 +108,9 @@ onLogin = (credentials) => {
     })
     .then(res => res.json())
     .then(res => {
-      console.log(res)
+      let newPending = [...this.state.current_user.pending_friends]
+      newPending.push(friend)
+      this.setState({current_user: {...this.state.current_user, pending_friends: newPending}})
     })
   }
 
@@ -127,7 +129,9 @@ onLogin = (credentials) => {
     })
     .then(res => res.json())
     .then(res => {
-      console.log(res)
+      let newFriends = [...this.state.current_user.friends]
+      newFriends.push(res.friend)
+      this.setState({current_user: {...this.state.current_user, friends: newFriends}}, ()=>console.log(this.state.current_user))
     })
     fetch(`http://localhost:3000/friend`, {
       method: "PATCH",
@@ -151,7 +155,6 @@ onLogin = (credentials) => {
     })
   }
 
-
   findUser(props) {
     return <User
       user={this.state.users.find(user => user.username === props.match.params.username)}
@@ -159,6 +162,7 @@ onLogin = (credentials) => {
       addFriend={this.addFriend}
       acceptFriend={this.acceptFriend}
       pending={this.findPendingFriends()}
+      deleteFriendRequest={this.deleteFriendRequest}
     />
   }
 
@@ -186,6 +190,28 @@ fetchProjects = () => {
   }
   setSearchTerm = (term) => {
     this.setState({searchTerm: term}, () => {console.log(term)})
+  }
+
+  deleteFriendRequest = (friend) => {
+    fetch(`http://localhost:3000/deleteRequest`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "user_friend": {
+        "friend_username": this.state.current_user.username,
+        "user_username": friend.username,
+        "accepted": true
+      }})
+    })
+    .then(res=>res.json())
+    .then(res=> {
+      if(res.message === 'Succesful.'){
+        let newUsers = this.state.users.filter(user=>user.username != friend.username)
+        this.setState({users: newUsers}, ()=>console.log(this.state.users))
+      }
+    })
   }
 
   
@@ -289,6 +315,7 @@ fetchProjects = () => {
                         currentUser={this.state.current_user} 
                         acceptFriend={this.acceptFriend}
                         pending={this.findPendingFriends()}
+                        deleteFriendRequest={this.deleteFriendRequest}
                       />
                     </Route>
                     <Route exact path="/user/:username" render={(props)=>this.findUser(props)}/>
