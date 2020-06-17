@@ -46,6 +46,8 @@ class User extends React.Component {
         lowerView: 1,
     }
 
+    setLowerView = (pending) => pending ? this.setState({lowerView: 1}) : this.forceUpdate()
+
     isCurrentUser = () => this.props.user.username === this.props.currentUser.username ? true : false
 
     isFriend = () => {
@@ -61,10 +63,22 @@ class User extends React.Component {
     lowerView = () => {
         if(this.state.lowerView === 1)
             return <ProjectContainer projects={this.props.user.projects}/>
-        else if(this.state.lowerView === 2)
-            return <UserFriends friends={this.props.user.friends} pending={false} acceptFriend={this.acceptFriend}/>
-        else
-            return <UserFriends friends={this.props.pending} pending={true} acceptFriend={this.props.acceptFriend}/>
+        else if(this.state.lowerView === 2){
+            return <UserFriends 
+                friends={this.props.user.friends} 
+                pending={false} 
+                acceptFriend={this.acceptFriend} 
+                setLowerView={this.setLowerView}
+                deleteFriendRequest={this.props.deleteFriendRequest}
+            />}
+        else{
+            return <UserFriends 
+            friends={this.props.pending} 
+            pending={true} 
+            acceptFriend={this.props.acceptFriend} 
+            setLowerView={this.setLowerView}
+            deleteFriendRequest={this.props.deleteFriendRequest}
+        />}
     }
 
     render() {
@@ -95,7 +109,9 @@ class User extends React.Component {
                             {
                                 !this.isCurrentUser() && !this.isFriend() && !this.isPending() && (
                                     <Button variant="primary" 
-                                        onClick={() => {this.props.addFriend(this.props.user)}}>
+                                        onClick={() => {
+                                            this.props.addFriend(this.props.user)
+                                        }}>
                                         Add Friend
                                     </Button>
                                 )
@@ -104,6 +120,13 @@ class User extends React.Component {
                                 !this.isCurrentUser() && !this.isFriend() && this.isPending() && (
                                     <Button variant="danger">
                                         Pending
+                                    </Button>
+                                )
+                            }
+                            {
+                                !this.isCurrentUser() && this.isFriend()&& (
+                                    <Button variant="success">
+                                        Friend
                                     </Button>
                                 )
                             }

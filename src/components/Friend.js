@@ -4,7 +4,11 @@ import { withRouter } from "react-router"
 
 const Friend = (props) => {
     return (
-        <ListGroupItem onClick={()=> {}}>
+        <ListGroupItem onClick={()=> {
+            props.setLowerView(props.pending)
+            if(!props.pending)
+                props.history.push(`/user/${props.user.username}`)
+        }}>
             <Row>
                 <Col md={8}>
                     <Image 
@@ -17,10 +21,19 @@ const Friend = (props) => {
                 props.pending && (
                     <Row>
                         <Col>
-                            <Button variant="success" onClick={()=>props.acceptFriend(props.user)}/>
+                            <Button variant="success" onClick={()=>{
+
+                                if(props.pendingRemaining === 1)
+                                    props.setLowerView(props.pending)
+                                props.acceptFriend(props.user)
+                            }}/>
                         </Col>
                         <Col>
-                            <Button variant="danger" onClick={()=>console.log('approved')}/>
+                            <Button variant="danger" onClick={()=>{
+                                if(props.pendingRemaining === 1)
+                                    props.setLowerView(props.pending)
+                                props.deleteFriendRequest(props.user)
+                            }}/>
                         </Col>
                     </Row>
                 )
